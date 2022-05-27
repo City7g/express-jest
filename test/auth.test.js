@@ -10,9 +10,10 @@ const newUser = { "name": uuidv4(), "password": "newPassword" }
 describe("Логин пользователя", () => {
   test("Логин пользователя с правильными данными", async () => {
     const data = await request(app).post('/auth/login').send(validUser)
-    expect(data.text).toMatch(/^{.*}$/)
-    expect(data.text).toMatch(/accessToken":"[\w-]{5,150}\.[\w-]{5,150}\.[\w-]{5,150}"/i)
-    expect(data.text).toMatch(/"refreshToken":"[\w-]{5,150}\.[\w-]{5,150}\.[\w-]{5,150}"/i)
+    const json = JSON.parse(data.text)
+    expect(typeof json).toBe('object')
+    expect(typeof json.accessToken).toBe('string')
+    expect(json.refreshToken).toMatch(/[\w.]{50}/)
     expect(data.statusCode).toBe(200)
   });
 
