@@ -6,10 +6,15 @@ html(lang="en")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
     title Document
   body
+    a(href="/login") Login
+    p= locales
     if error
       p= error
-    form(action="/auth/login", method="POST")
-      input(type="text", name="name") 
+    form(action="/login", method="POST")
+      if oldName
+        input(type="text", name="name", value=oldName)
+      else 
+        input(type="text", name="name") 
       input(type="password", name="password")
       button(type="submit") Login
       input(type="hidden", name="_csrf", value=csrf)

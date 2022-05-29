@@ -1,5 +1,5 @@
 const app = require("./app");
-const sequelize = require('./src/data/db')
+const sequelize = require('./backend/data/db')
 
 app.listen(3000, async () => {
   // try {
