@@ -9,28 +9,57 @@ async function hashPassword(params) {
 }
 
 async function listUsers() {
-  return await user.findAll()
+  try {
+    return await user.findAll()
+  } catch (err) {
+    throw 'Server error'
+  }
 }
 
 async function findUser(query) {
-  return await user.findOne({ where: query })
+  try {
+    return await user.findOne({ where: query })
+  } catch (err) {
+    throw 'Server error'
+  }
 }
 
-async function findUserById(query) {
-  return await user.findOne({ where: query })
+async function findUserById(id) {
+  try {
+    return await user.findByPk(id)
+  } catch (err) {
+    throw 'Server error'
+  }
 }
 
 async function createUser(params) {
-  return await user.create(await hashPassword(params))
+  try {
+    const candidate = await findUser({ name: params.name })
+    if(candidate) throw 'Такой пользователь уже существует'
+    
+    return await user.create(await hashPassword(params))
+  } catch (err) {
+    throw 'Server error'
+  }
 }
 
 async function updateUser(id, params) {
-  if (params.password) params.password = await hashPassword(params.password)
-  return await user.update(params, { where: { id } })
+  try {
+    const candidate = await findUserById(id)
+    if(candidate) throw 'Пользователя с такий id не существует'
+
+    return await user.update(await hashPassword(params), { where: { id } })
+  } catch (err) {
+    throw 'Server error'
+  }
 }
 
 async function deleteUser(id) {
-  return await user.destroy({ where: { id } })
+  try {
+    return await user.destroy({ where: { id } })
+  } catch (err) {
+    throw 'Server error'
+  }
 }
 
 module.exports = {
