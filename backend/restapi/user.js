@@ -16,23 +16,26 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   const { name, password } = req.body
   const candidate = await findUser({ name })
+
   if (candidate) return res.status(404).send('Такой пользователь уже существует')
   const user = await createUser({ name, password })
-  res.status(200).json({ user })
-})
-
-router.delete('/:id', async (req, res) => {
-  const candidate = await findUserById(+req.params.id)
-  if (!candidate) return res.status(404).send('Такой пользователя не существует')
-  await deleteUser(req.params.id, req.body)
-  res.status(200).send('Пользователь успешно удален')
+  res.status(201).json({ user })
 })
 
 router.put('/:id', async (req, res) => {
   const candidate = await findUserById(+req.params.id)
   if (!candidate) return res.status(404).send('Такой пользователя не существует')
+  
   await updateUser(req.params.id, req.body)
   res.status(200).send('Пользователь успешно обновлен')
+})
+
+router.delete('/:id', async (req, res) => {
+  const candidate = await findUserById(+req.params.id)
+  if (!candidate) return res.status(404).send('Такой пользователя не существует')
+
+  await deleteUser(req.params.id, req.body)
+  res.status(200).send('Пользователь успешно удален')
 })
 
 module.exports = router;
