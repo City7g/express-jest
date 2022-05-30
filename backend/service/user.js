@@ -1,6 +1,13 @@
 const user = require('../model/user')
 const bcrypt = require('bcrypt')
 
+async function hashPassword(params) {
+  if (params.password) {
+    params.password = await bcrypt.hash(params.password, 10)
+  }
+  return params
+}
+
 async function listUsers() {
   return await user.findAll()
 }
@@ -14,13 +21,16 @@ async function findUserById(query) {
 }
 
 async function createUser(params) {
-  if (params.password) params.password = (await bcrypt.hash(params.password, 10))
-  return await user.create(params)
+  return await user.create(await hashPassword(params))
 }
 
 async function updateUser(id, params) {
-  if (params.password) params.password = (await bcrypt.hash(params.password, 10))
+  if (params.password) params.password = await hashPassword(params.password)
   return await user.update(params, { where: { id } })
+}
+
+async function deleteUser(id) {
+  return await user.destroy({ where: { id } })
 }
 
 module.exports = {
@@ -28,5 +38,6 @@ module.exports = {
   findUser,
   findUserById,
   createUser,
-  updateUser
+  updateUser,
+  deleteUser
 }

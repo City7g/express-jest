@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { listUsers, findUser, findUserById, createUser, updateUser } = require('../service/user')
+const { listUsers, findUser, findUserById, createUser, updateUser, deleteUser } = require('../service/user')
 
 router.get('/', async (req, res) => {
   const users = await listUsers()
@@ -21,10 +21,17 @@ router.post('/', async (req, res) => {
   res.status(200).json({ user })
 })
 
+router.delete('/:id', async (req, res) => {
+  const candidate = await findUserById(+req.params.id)
+  if (!candidate) return res.status(404).send('Такой пользователя не существует')
+  await deleteUser(req.params.id, req.body)
+  res.status(200).send('Пользователь успешно удален')
+})
+
 router.put('/:id', async (req, res) => {
   const candidate = await findUserById(+req.params.id)
   if (!candidate) return res.status(404).send('Такой пользователя не существует')
-  const some = await updateUser(req.params.id, req.body)
+  await updateUser(req.params.id, req.body)
   res.status(200).send('Пользователь успешно обновлен')
 })
 
